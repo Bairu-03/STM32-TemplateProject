@@ -1,0 +1,12 @@
+*.__i
+*.axf
+*.bak
+*.crf
+*.d
+*.dep
+*.iex
+*.lnp
+*.o
+*.sct
+
+*.log
