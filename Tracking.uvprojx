@@ -709,6 +709,21 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED_Font.h</FilePath>
             </File>
+            <File>
+              <FileName>PWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\PWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\PWM.h</FilePath>
+            </File>
+            <File>
+              <FileName>Car.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Car.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

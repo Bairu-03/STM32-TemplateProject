@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.vbs": "vbs",
+        "stm32f10x.h": "c"
+    }
+}
