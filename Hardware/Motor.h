@@ -1,14 +1,11 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 
-#define Left_Wheel_F(Duty) TIM2_PWM_Duty(1, (Duty))
-#define Left_Wheel_B(Duty) TIM2_PWM_Duty(3, (Duty))
-#define Right_Wheel_F(Duty) TIM2_PWM_Duty(2, (Duty))
-#define Right_Wheel_B(Duty) TIM2_PWM_Duty(4, (Duty))
-
-#define Motor_Enable() GPIO_SetBits(GPIOA, GPIO_Pin_4)
-#define Motor_Disable() GPIO_ResetBits(GPIOA, GPIO_Pin_4)
+#define Car_P ((uint8_t)0)
+#define Car_F ((uint8_t)1)
+#define Car_B ((uint8_t)2)
 
 void Motor_PWM_Init(void);
+void Car_Run(uint8_t CarState, uint8_t Duty_L, uint8_t Duty_R);
 
 #endif
