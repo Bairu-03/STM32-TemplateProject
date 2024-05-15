@@ -720,9 +720,24 @@
               <FilePath>.\Hardware\PWM.h</FilePath>
             </File>
             <File>
-              <FileName>Car.h</FileName>
+              <FileName>InfTrack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\InfTrack.c</FilePath>
+            </File>
+            <File>
+              <FileName>InfTrack.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\Hardware\Car.h</FilePath>
+              <FilePath>.\Hardware\InfTrack.h</FilePath>
+            </File>
+            <File>
+              <FileName>Motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>Motor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Motor.h</FilePath>
             </File>
           </Files>
         </Group>
