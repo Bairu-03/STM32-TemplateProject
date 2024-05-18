@@ -1,5 +1,4 @@
 #include "stm32f10x.h"
-#include "PWM.h"
 #include "Motor.h"
 
 /**

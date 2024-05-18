@@ -2,6 +2,9 @@
     "files.associations": {
         "*.vbs": "vbs",
         "stm32f10x.h": "c",
-        "inftrack.h": "c"
+        "inftrack.h": "c",
+        "stdio.h": "c",
+        "motor.h": "c",
+        "usart.h": "c"
     }
 }

@@ -1,6 +1,8 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 
+#include "PWM.h"
+
 #define Car_P ((uint8_t)0)
 #define Car_F ((uint8_t)1)
 #define Car_B ((uint8_t)2)

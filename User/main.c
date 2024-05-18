@@ -1,32 +1,34 @@
 #include "stm32f10x.h"
+#include "delay.h"
 #include "OLED.h"
-#include "PWM.h"
 #include "Motor.h"
 #include "InfTrack.h"
+#include "usart.h"
 
 int main(void)
 {
     OLED_Init();
     Motor_PWM_Init();
     InfTracker_Init();
-    OLED_ShowString(1, 1, "Track Test", 8);
+    uart_init(115200);
+    OLED_ShowString(1, 1, "UART Track Test", 8);
 
+    uint8_t def = 0;
     while (1)
     {
-        uint8_t InfTD;
-        OLED_ShowBinNum(3, 1, Get_InfTdata(), 5, 8);
-        InfTD = Get_InfTdata() & 0x0E;  // 保留红外寻迹数据中间三位
-        if(InfTD == 0x0A)  // 101 直行前进
+        if (USART_RX_STA & 0x8000)
+        {
+            def = USART_RX_BUF[0];
+            OLED_ShowNum(3, 1, def, 2, 8);
+            USART_RX_STA = 0;
+        }
+        if (def == 50) // 101 直行前进
             Car_Run(Car_F, 30, 30);
-        if(InfTD == 0x06)  // 011 左转
+        else if ((def > 50) && (def < 70)) // 011 左转
             Car_Run(Car_F, 0, 30);
-        if(InfTD == 0x0C)  // 110 右转
+        else if ((def < 50) && (def > 30)) // 110 右转
             Car_Run(Car_F, 30, 0);
-        if(InfTD == 0x08)  // 100 大右转
-            Car_Run(Car_F, 50, 0);
-        if(InfTD == 0x02)  // 001 大左转
-            Car_Run(Car_F, 0, 50);
-        if(InfTD == 0x00)  // 000 停
+        else
             Car_Run(Car_P, 0, 0);
     }
 }
