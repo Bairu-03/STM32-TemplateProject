@@ -3,11 +3,11 @@
 <title>Static Call Graph - [.\Objects\寻迹小车.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\寻迹小车.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat May 18 18:12:09 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Sat Jun 22 18:38:42 2024
 <BR><P>
-<H3>Maximum Stack Usage =        108 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        120 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-__rt_entry_main &rArr; main &rArr; uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
+__rt_entry_main &rArr; main &rArr; OLED_ShowNum &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 <P>
 <H3>
 Functions with no stack information
@@ -19,6 +19,10 @@ Functions with no stack information
 <H3>
 Mutually Recursive functions
 </H3> <LI><a href="#[1f]">ADC1_2_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1f]">ADC1_2_IRQHandler</a><BR>
+ <LI><a href="#[7]">BusFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[7]">BusFault_Handler</a><BR>
+ <LI><a href="#[5]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[5]">HardFault_Handler</a><BR>
+ <LI><a href="#[6]">MemManage_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[6]">MemManage_Handler</a><BR>
+ <LI><a href="#[8]">UsageFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[8]">UsageFault_Handler</a><BR>
 </UL>
 <P>
 <H3>
@@ -196,8 +200,8 @@ Global Symbols
 <P><STRONG><a name="[a0]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[43]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 108 + Unknown Stack Size
-<LI>Call Chain = __rt_entry_main &rArr; main &rArr; uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
+<BR><BR>[Stack]<UL><LI>Max Depth = 120 + Unknown Stack Size
+<LI>Call Chain = __rt_entry_main &rArr; main &rArr; OLED_ShowNum &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
 <LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -397,13 +401,17 @@ Global Symbols
 
 <P><STRONG><a name="[a9]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[7]"></a>BusFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f10x_it.o(i.BusFault_Handler))
+<P><STRONG><a name="[7]"></a>BusFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.BusFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
 <P><STRONG><a name="[aa]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[4d]"></a>Car_Run</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, motor.o(i.Car_Run))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Car_Run &rArr; TIM2_PWM_Duty
+<P><STRONG><a name="[4d]"></a>Car_Run</STRONG> (Thumb, 152 bytes, Stack size 24 bytes, motor.o(i.Car_Run))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Car_Run &rArr; TIM2_PWM_Duty
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
@@ -415,7 +423,7 @@ Global Symbols
 <P><STRONG><a name="[a]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[56]"></a>GPIO_Init</STRONG> (Thumb, 278 bytes, Stack size 24 bytes, stm32f10x_gpio.o(i.GPIO_Init))
+<P><STRONG><a name="[56]"></a>GPIO_Init</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, stm32f10x_gpio.o(i.GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
@@ -425,7 +433,7 @@ Global Symbols
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[55]"></a>GPIO_PinRemapConfig</STRONG> (Thumb, 138 bytes, Stack size 20 bytes, stm32f10x_gpio.o(i.GPIO_PinRemapConfig))
+<P><STRONG><a name="[55]"></a>GPIO_PinRemapConfig</STRONG> (Thumb, 86 bytes, Stack size 20 bytes, stm32f10x_gpio.o(i.GPIO_PinRemapConfig))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = GPIO_PinRemapConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InfTracker_Init
@@ -440,18 +448,22 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Car_Run
 </UL>
 
-<P><STRONG><a name="[52]"></a>GPIO_WriteBit</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32f10x_gpio.o(i.GPIO_WriteBit))
+<P><STRONG><a name="[52]"></a>GPIO_WriteBit</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_gpio.o(i.GPIO_WriteBit))
 <BR><BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Stop
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Start
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Init
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_Send_Byte
 </UL>
 
-<P><STRONG><a name="[5]"></a>HardFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f10x_it.o(i.HardFault_Handler))
+<P><STRONG><a name="[5]"></a>HardFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.HardFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[51]"></a>I2C_Send_Byte</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, oled.o(i.I2C_Send_Byte))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = I2C_Send_Byte
+<P><STRONG><a name="[51]"></a>I2C_Send_Byte</STRONG> (Thumb, 86 bytes, Stack size 32 bytes, oled.o(i.I2C_Send_Byte))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
 </UL>
@@ -469,11 +481,15 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[6]"></a>MemManage_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f10x_it.o(i.MemManage_Handler))
+<P><STRONG><a name="[6]"></a>MemManage_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.MemManage_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[57]"></a>Motor_PWM_Init</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, motor.o(i.Motor_PWM_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = Motor_PWM_Init &rArr; TIM2_PWM_Init &rArr; GPIO_Init
+<P><STRONG><a name="[57]"></a>Motor_PWM_Init</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, motor.o(i.Motor_PWM_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = Motor_PWM_Init &rArr; TIM2_PWM_Init &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
@@ -486,14 +502,14 @@ Global Symbols
 <P><STRONG><a name="[4]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[7c]"></a>NVIC_Init</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, misc.o(i.NVIC_Init))
+<P><STRONG><a name="[7c]"></a>NVIC_Init</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, misc.o(i.NVIC_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = NVIC_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[59]"></a>OLED_Clear</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, oled.o(i.OLED_Clear))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = OLED_Clear &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[59]"></a>OLED_Clear</STRONG> (Thumb, 38 bytes, Stack size 16 bytes, oled.o(i.OLED_Clear))
+<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = OLED_Clear &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_WriteData
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_SetCursor
@@ -501,7 +517,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Init
 </UL>
 
-<P><STRONG><a name="[5c]"></a>OLED_Init</STRONG> (Thumb, 174 bytes, Stack size 16 bytes, oled.o(i.OLED_Init))
+<P><STRONG><a name="[5c]"></a>OLED_Init</STRONG> (Thumb, 172 bytes, Stack size 8 bytes, oled.o(i.OLED_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = OLED_Init &rArr; OLED_Clear &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Init
@@ -511,14 +527,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[61]"></a>OLED_Pow</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, oled.o(i.OLED_Pow))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = OLED_Pow
-</UL>
-<BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowNum
+<P><STRONG><a name="[61]"></a>OLED_Pow</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, oled.o(i.OLED_Pow))
+<BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowNum
 </UL>
 
-<P><STRONG><a name="[5a]"></a>OLED_SetCursor</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, oled.o(i.OLED_SetCursor))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[5a]"></a>OLED_SetCursor</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, oled.o(i.OLED_SetCursor))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_WriteCommand
 </UL>
@@ -526,8 +540,8 @@ Global Symbols
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear
 </UL>
 
-<P><STRONG><a name="[5f]"></a>OLED_ShowChar</STRONG> (Thumb, 150 bytes, Stack size 24 bytes, oled.o(i.OLED_ShowChar))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[5f]"></a>OLED_ShowChar</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, oled.o(i.OLED_ShowChar))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_WriteData
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_SetCursor
@@ -536,8 +550,8 @@ Global Symbols
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowNum
 </UL>
 
-<P><STRONG><a name="[60]"></a>OLED_ShowNum</STRONG> (Thumb, 78 bytes, Stack size 32 bytes, oled.o(i.OLED_ShowNum))
-<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = OLED_ShowNum &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[60]"></a>OLED_ShowNum</STRONG> (Thumb, 72 bytes, Stack size 40 bytes, oled.o(i.OLED_ShowNum))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = OLED_ShowNum &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowChar
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Pow
@@ -545,16 +559,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[62]"></a>OLED_ShowString</STRONG> (Thumb, 48 bytes, Stack size 24 bytes, oled.o(i.OLED_ShowString))
-<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[62]"></a>OLED_ShowString</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, oled.o(i.OLED_ShowString))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = OLED_ShowString &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowChar
 </UL>
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[5e]"></a>OLED_WriteCommand</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, oled.o(i.OLED_WriteCommand))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = OLED_WriteCommand &rArr; I2C_Send_Byte
+<P><STRONG><a name="[5e]"></a>OLED_WriteCommand</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, oled.o(i.OLED_WriteCommand))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Stop
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Start
@@ -564,8 +578,8 @@ Global Symbols
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Init
 </UL>
 
-<P><STRONG><a name="[5b]"></a>OLED_WriteData</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, oled.o(i.OLED_WriteData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = OLED_WriteData &rArr; I2C_Send_Byte
+<P><STRONG><a name="[5b]"></a>OLED_WriteData</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, oled.o(i.OLED_WriteData))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = OLED_WriteData &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Stop
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sim_I2C_Start
@@ -578,11 +592,11 @@ Global Symbols
 <P><STRONG><a name="[b]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.PendSV_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[6b]"></a>RCC_APB1PeriphClockCmd</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd))
+<P><STRONG><a name="[6b]"></a>RCC_APB1PeriphClockCmd</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[54]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd))
+<P><STRONG><a name="[54]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd))
 <BR><BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InfTracker_Init
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
@@ -590,8 +604,8 @@ Global Symbols
 <LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[7a]"></a>RCC_GetClocksFreq</STRONG> (Thumb, 192 bytes, Stack size 12 bytes, stm32f10x_rcc.o(i.RCC_GetClocksFreq))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = RCC_GetClocksFreq
+<P><STRONG><a name="[7a]"></a>RCC_GetClocksFreq</STRONG> (Thumb, 154 bytes, Stack size 8 bytes, stm32f10x_rcc.o(i.RCC_GetClocksFreq))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = RCC_GetClocksFreq
 </UL>
 <BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
 </UL>
@@ -599,8 +613,8 @@ Global Symbols
 <P><STRONG><a name="[9]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.SVC_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[5d]"></a>Sim_I2C_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, oled.o(i.Sim_I2C_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Sim_I2C_Init &rArr; GPIO_Init
+<P><STRONG><a name="[5d]"></a>Sim_I2C_Init</STRONG> (Thumb, 76 bytes, Stack size 24 bytes, oled.o(i.Sim_I2C_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Sim_I2C_Init &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
@@ -609,8 +623,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Init
 </UL>
 
-<P><STRONG><a name="[63]"></a>Sim_I2C_Start</STRONG> (Thumb, 48 bytes, Stack size 8 bytes, oled.o(i.Sim_I2C_Start))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Sim_I2C_Start
+<P><STRONG><a name="[63]"></a>Sim_I2C_Start</STRONG> (Thumb, 52 bytes, Stack size 16 bytes, oled.o(i.Sim_I2C_Start))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Sim_I2C_Start
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
 </UL>
@@ -618,8 +632,8 @@ Global Symbols
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_WriteCommand
 </UL>
 
-<P><STRONG><a name="[64]"></a>Sim_I2C_Stop</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, oled.o(i.Sim_I2C_Stop))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Sim_I2C_Stop
+<P><STRONG><a name="[64]"></a>Sim_I2C_Stop</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, oled.o(i.Sim_I2C_Stop))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Sim_I2C_Stop
 </UL>
 <BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
 </UL>
@@ -630,15 +644,15 @@ Global Symbols
 <P><STRONG><a name="[c]"></a>SysTick_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.SysTick_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[38]"></a>SystemInit</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, system_stm32f10x.o(i.SystemInit))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = SystemInit &rArr; SetSysClock &rArr; SetSysClockTo72
+<P><STRONG><a name="[38]"></a>SystemInit</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, system_stm32f10x.o(i.SystemInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = SystemInit &rArr; SetSysClock &rArr; SetSysClockTo72
 </UL>
 <BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(.text)
 </UL>
-<P><STRONG><a name="[4f]"></a>TIM2_PWM_Duty</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, pwm.o(i.TIM2_PWM_Duty))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM2_PWM_Duty
+<P><STRONG><a name="[4f]"></a>TIM2_PWM_Duty</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, pwm.o(i.TIM2_PWM_Duty))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = TIM2_PWM_Duty
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_SetCompare4
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_SetCompare3
@@ -648,8 +662,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Car_Run
 </UL>
 
-<P><STRONG><a name="[58]"></a>TIM2_PWM_Init</STRONG> (Thumb, 340 bytes, Stack size 48 bytes, pwm.o(i.TIM2_PWM_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = TIM2_PWM_Init &rArr; GPIO_Init
+<P><STRONG><a name="[58]"></a>TIM2_PWM_Init</STRONG> (Thumb, 306 bytes, Stack size 64 bytes, pwm.o(i.TIM2_PWM_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = TIM2_PWM_Init &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
@@ -677,43 +691,43 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[6d]"></a>TIM_OC1Init</STRONG> (Thumb, 132 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC1Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM_OC1Init
+<P><STRONG><a name="[6d]"></a>TIM_OC1Init</STRONG> (Thumb, 114 bytes, Stack size 12 bytes, stm32f10x_tim.o(i.TIM_OC1Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = TIM_OC1Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[71]"></a>TIM_OC1PreloadConfig</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC1PreloadConfig))
+<P><STRONG><a name="[71]"></a>TIM_OC1PreloadConfig</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC1PreloadConfig))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[6e]"></a>TIM_OC2Init</STRONG> (Thumb, 154 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC2Init))
+<P><STRONG><a name="[6e]"></a>TIM_OC2Init</STRONG> (Thumb, 128 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC2Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM_OC2Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[72]"></a>TIM_OC2PreloadConfig</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC2PreloadConfig))
+<P><STRONG><a name="[72]"></a>TIM_OC2PreloadConfig</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC2PreloadConfig))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[6f]"></a>TIM_OC3Init</STRONG> (Thumb, 150 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC3Init))
+<P><STRONG><a name="[6f]"></a>TIM_OC3Init</STRONG> (Thumb, 124 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC3Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM_OC3Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[73]"></a>TIM_OC3PreloadConfig</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC3PreloadConfig))
+<P><STRONG><a name="[73]"></a>TIM_OC3PreloadConfig</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC3PreloadConfig))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[70]"></a>TIM_OC4Init</STRONG> (Thumb, 114 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC4Init))
+<P><STRONG><a name="[70]"></a>TIM_OC4Init</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, stm32f10x_tim.o(i.TIM_OC4Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = TIM_OC4Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[74]"></a>TIM_OC4PreloadConfig</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC4PreloadConfig))
+<P><STRONG><a name="[74]"></a>TIM_OC4PreloadConfig</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_OC4PreloadConfig))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
@@ -733,12 +747,14 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Duty
 </UL>
 
-<P><STRONG><a name="[6c]"></a>TIM_TimeBaseInit</STRONG> (Thumb, 122 bytes, Stack size 0 bytes, stm32f10x_tim.o(i.TIM_TimeBaseInit))
-<BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
+<P><STRONG><a name="[6c]"></a>TIM_TimeBaseInit</STRONG> (Thumb, 114 bytes, Stack size 12 bytes, stm32f10x_tim.o(i.TIM_TimeBaseInit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = TIM_TimeBaseInit
+</UL>
+<BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM2_PWM_Init
 </UL>
 
-<P><STRONG><a name="[32]"></a>USART1_IRQHandler</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, usart.o(i.USART1_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = USART1_IRQHandler &rArr; USART_GetITStatus
+<P><STRONG><a name="[32]"></a>USART1_IRQHandler</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, usart.o(i.USART1_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = USART1_IRQHandler &rArr; USART_GetITStatus
 </UL>
 <BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiveData
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetITStatus
@@ -749,35 +765,39 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[77]"></a>USART_GetITStatus</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, stm32f10x_usart.o(i.USART_GetITStatus))
+<P><STRONG><a name="[77]"></a>USART_GetITStatus</STRONG> (Thumb, 64 bytes, Stack size 16 bytes, stm32f10x_usart.o(i.USART_GetITStatus))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = USART_GetITStatus
 </UL>
 <BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[7d]"></a>USART_ITConfig</STRONG> (Thumb, 74 bytes, Stack size 20 bytes, stm32f10x_usart.o(i.USART_ITConfig))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = USART_ITConfig
+<P><STRONG><a name="[7d]"></a>USART_ITConfig</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, stm32f10x_usart.o(i.USART_ITConfig))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = USART_ITConfig
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[79]"></a>USART_Init</STRONG> (Thumb, 210 bytes, Stack size 56 bytes, stm32f10x_usart.o(i.USART_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = USART_Init &rArr; RCC_GetClocksFreq
+<P><STRONG><a name="[79]"></a>USART_Init</STRONG> (Thumb, 182 bytes, Stack size 32 bytes, stm32f10x_usart.o(i.USART_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetClocksFreq
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 </UL>
 
-<P><STRONG><a name="[78]"></a>USART_ReceiveData</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32f10x_usart.o(i.USART_ReceiveData))
+<P><STRONG><a name="[78]"></a>USART_ReceiveData</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f10x_usart.o(i.USART_ReceiveData))
 <BR><BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[8]"></a>UsageFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f10x_it.o(i.UsageFault_Handler))
+<P><STRONG><a name="[8]"></a>UsageFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f10x_it.o(i.UsageFault_Handler))
+<BR><BR>[Calls]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 108<LI>Call Chain = main &rArr; uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
+<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 128 bytes, Stack size 8 bytes, main.o(i.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = main &rArr; OLED_ShowNum &rArr; OLED_ShowChar &rArr; OLED_SetCursor &rArr; OLED_WriteCommand &rArr; I2C_Send_Byte
 </UL>
 <BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Car_Run
@@ -790,8 +810,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[7b]"></a>uart_init</STRONG> (Thumb, 152 bytes, Stack size 32 bytes, usart.o(i.uart_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
+<P><STRONG><a name="[7b]"></a>uart_init</STRONG> (Thumb, 152 bytes, Stack size 40 bytes, usart.o(i.uart_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = uart_init &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
@@ -806,15 +826,15 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[65]"></a>SetSysClock</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, system_stm32f10x.o(i.SetSysClock))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = SetSysClock &rArr; SetSysClockTo72
+<P><STRONG><a name="[65]"></a>SetSysClock</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, system_stm32f10x.o(i.SetSysClock))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = SetSysClock &rArr; SetSysClockTo72
 </UL>
 <BR>[Calls]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClockTo72
 </UL>
 <BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
 </UL>
 
-<P><STRONG><a name="[66]"></a>SetSysClockTo72</STRONG> (Thumb, 214 bytes, Stack size 12 bytes, system_stm32f10x.o(i.SetSysClockTo72))
+<P><STRONG><a name="[66]"></a>SetSysClockTo72</STRONG> (Thumb, 166 bytes, Stack size 12 bytes, system_stm32f10x.o(i.SetSysClockTo72))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = SetSysClockTo72
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock

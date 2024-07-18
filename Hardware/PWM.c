@@ -52,7 +52,7 @@ void TIM2_PWM_Init(uint16_t psc, uint16_t arr)
     // 初始化TIM2_CH1的PWM模式
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             // 设置PWM模式1
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; // 比较输出使能
-    TIM_OCInitStructure.TIM_Pulse = 0;                            //
+    TIM_OCInitStructure.TIM_Pulse = 0;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     // 输出极性为高
     TIM_OC1Init(TIM2, &TIM_OCInitStructure);                      // 初始化TIM4_CH1
 
@@ -90,21 +90,25 @@ void TIM2_PWM_Init(uint16_t psc, uint16_t arr)
 /**
  * @brief  控制TIM2各通道PWM占空比
  * @param  CHx 选择PWM输出通道。
- *     @arg 取值: 1 - PA0 | 2 - PA1 | 3 - PA2 | 4 - PA3
+ *     @arg 取值:
+ *      - \b 1 - PA0
+ *      - \b 2 - PA1
+ *      - \b 3 - PA2
+ *      - \b 4 - PA3
  * @param  Duty PWM占空比。
  *     @arg 取值: 0 - 100
  * @retval
  */
-void TIM2_PWM_Duty(uint8_t CHx, uint8_t Duty)
+void TIM2_PWM_Duty(uint8_t CHx, float Duty)
 {
     if (CHx == 1)
-        TIM_SetCompare1(TIM2, ((T2_ARR + 1) * Duty) / 100);
+        TIM_SetCompare1(TIM2, ((T2_ARR + 1) * Duty) / 100.0);
     if (CHx == 2)
-        TIM_SetCompare2(TIM2, ((T2_ARR + 1) * Duty) / 100);
+        TIM_SetCompare2(TIM2, ((T2_ARR + 1) * Duty) / 100.0);
     if (CHx == 3)
-        TIM_SetCompare3(TIM2, ((T2_ARR + 1) * Duty) / 100);
+        TIM_SetCompare3(TIM2, ((T2_ARR + 1) * Duty) / 100.0);
     if (CHx == 4)
-        TIM_SetCompare4(TIM2, ((T2_ARR + 1) * Duty) / 100);
+        TIM_SetCompare4(TIM2, ((T2_ARR + 1) * Duty) / 100.0);
 }
 
 /*

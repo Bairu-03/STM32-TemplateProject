@@ -7,7 +7,7 @@ del *.axf /s
 del *.bak /s
 del *.crf /s
 del *.ddk /s
-del *.dep /s 
+del *.dep /s
 del *.edk /s
 del *.htm /s
 del *.iex /s

@@ -478,7 +478,7 @@ ARM Macro Assembler    Page 8
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\startup_stm32f10x_md.d -o.\objects\startup_stm32f10x_md.
 o -ID:\Program_Files\Keil_v5\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include 
---predefine="__UVISION_VERSION SETA 538" --predefine="STM32F10X_MD SETA 1" --li
+--predefine="__UVISION_VERSION SETA 540" --predefine="STM32F10X_MD SETA 1" --li
 st=.\listings\startup_stm32f10x_md.lst Start\startup_stm32f10x_md.s
 
 

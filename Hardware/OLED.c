@@ -1,9 +1,9 @@
 /**
  ******************************************************************************
  * @file    OLED.c
- * @author  Blue_寻
- * @version V1.1.1
- * @date    2024-03-25 00:08:39
+ * @author  Bairu
+ * @version V1.3
+ * @date    2024年7月18日 19:29:32
  * @brief   OLED屏幕驱动程序
  ******************************************************************************
  */
@@ -90,8 +90,9 @@ uint8_t I2C_Wait_Ack(void)
 /**
  * @brief  模拟I2C主机发送应答信号。
  * @param  ack 决定主机是否发送应答信号。
- *     @arg I2C_ACK: 发送应答信号
- *     @arg I2C_NO_ACK: 不发送应答信号
+ *     @arg 有效取值:
+ *      - \b I2C_ACK : 发送应答信号
+ *      - \b I2C_NO_ACK: 不发送应答信号
  * @retval 无
  */
 void I2C_Send_Ack(uint8_t ack)
@@ -110,8 +111,9 @@ void I2C_Send_Ack(uint8_t ack)
 /**
  * @brief  I2C读取一个字节。
  * @param  ack 决定主机是否发送应答信号。
- *     @arg I2C_ACK: 发送应答信号
- *     @arg I2C_NO_ACK: 不发送应答信号
+ *     @arg 有效取值:
+ *      - \b I2C_ACK: 发送应答信号
+ *      - \b I2C_NO_ACK: 不发送应答信号
  * @retval data 读取到的数据
  */
 uint8_t I2C_Read_Byte(uint8_t ack)
@@ -243,26 +245,57 @@ void OLED_Clear(void)
 }
 
 /**
- * @brief  OLED屏幕滚动。
- * @param  LineS 滚动行起始地址。
- *     @arg LineX: 行号（X取值:1 - 8）
- * @param  LineE 滚动行终止地址。
- *     @arg LineX: 行号（X取值:1 - 8）
+ * @brief  OLED指定行水平滚动。
+ *      注意：必须先将显示数据传输完成后再启动滚动，否则极易乱码。
+ *      推荐顺序：调用OLED_Stop_Scroll -> 调用OLED_Clear -> 传输显示数据 -> 调用OLED_Scroll
+ * @param  LineS 滚动行范围: 第一行行号。
+ *     @arg 有效取值:
+ *      - \b Line1
+ *      - \b Line2
+ *      - \b Line3
+ *      - \b Line4
+ *      - \b Line5
+ *      - \b Line6
+ *      - \b Line7
+ *      - \b Line8
+ * @param  LineE 滚动行范围: 最后一行行号。
+ *     @arg 有效取值:
+ *      - \b Line1
+ *      - \b Line2
+ *      - \b Line3
+ *      - \b Line4
+ *      - \b Line5
+ *      - \b Line6
+ *      - \b Line7
+ *      - \b Line8
  * @param  ScrLR 滚动方向。
- *     @arg ScrL: 向左滚动
- *     @arg ScrR: 向右滚动
- * @param  Speed 滚动速度。
- *     @arg 取值: ?
+ *     @arg 有效取值:
+ *      - \b ScrL : 向左滚动
+ *      - \b ScrR : 向右滚动
+ * @param  Level 滚动速度等级。
+ *     @arg 取值: 0 - 7（慢 - 快）
  * @retval 无
  */
-void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Speed)
+void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Level)
 {
+    // SSD1306手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
+    uint8_t Speed[8] = {
+        0x03,   // 256帧
+        0x02,   // 128帧
+        0x01,   // 64帧
+        0x06,   // 25帧
+        0x00,   // 5帧
+        0x05,   // 4帧
+        0x04,   // 3帧
+        0x07    // 2帧
+    };
+
     OLED_WriteCommand(0x2E);  // 关闭滚动
     OLED_WriteCommand(ScrLR); // 水平向左滚动
     OLED_WriteCommand(0x00);  // 虚拟字节
-    OLED_WriteCommand(LineS); // 起始行 0
-    OLED_WriteCommand(Speed); // 滚动速度
-    OLED_WriteCommand(LineE); // 终止行 1
+    OLED_WriteCommand(LineS); // 起始行
+    OLED_WriteCommand(Speed[Level]); // 滚动速度（帧）
+    OLED_WriteCommand(LineE); // 终止行
     OLED_WriteCommand(0x00);  // 虚拟字节
     OLED_WriteCommand(0xFF);  // 虚拟字节
     OLED_WriteCommand(0x2F);  // 开启滚动
@@ -295,7 +328,8 @@ uint32_t OLED_Pow(uint32_t X, uint32_t Y)
 }
 
 /**
- * @brief  OLED初始化
+ * @brief  OLED初始化。
+ *      PB9 - SDA | PB8 - SCL
  * @param  无
  * @retval 无
  */
@@ -435,50 +469,6 @@ void OLED_ShowNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length,
 }
 
 /**
- * @brief  OLED显示有符号浮点数
- * @param  Line 起始行位置。
- *     @arg 取值: 1 - 8
- * @param  Column 起始列位置。
- *     @arg 取值: 1 - 128
- * @param  Num 要显示的数字。
- *     @arg 取值: -3.4028235E38 - +3.4028235E38
- * @param  Intlen 要显示的整数位数。
- *     @arg 取值: 1 - 10
- * @param  Declen 要显示的小数位数。
- *     @arg 取值: 1 - 10
- * @param  Size 字符大小。
- *     @arg 取值(宽x高): 6（6x8）、8（8x16）
- * @retval 无
- */
-void OLED_ShowFloat(uint8_t Line, uint8_t Column, float Num, uint8_t Intlen, uint8_t Declen, uint8_t Size)
-{
-    uint8_t p;
-    unsigned long m;
-    if (Num < 0)
-    {
-        Num = -Num;
-        OLED_ShowChar(Line, Column, '-', Size);
-        OLED_ShowNum(Line, Column + Size, (uint32_t)Num, Intlen, Size);
-        if (Declen > 0)
-            OLED_ShowString(Line, Column + Size * (Intlen + 1), ".", Size);
-        for (p = 2, m = 10; p <= Declen + 1; p++, m *= 10)
-        {
-            OLED_ShowNum(Line, Column + Size * (Intlen + p), (unsigned long)((Num - (uint32_t)Num) * m) % 10, 1, Size);
-        }
-    }
-    else
-    {
-        OLED_ShowNum(Line, Column, (uint32_t)Num, Intlen, Size);
-        if (Declen > 0)
-            OLED_ShowString(Line, Column + Intlen * Size, ".", Size);
-        for (p = 1, m = 10; p <= Declen; p++, m *= 10)
-        {
-            OLED_ShowNum(Line, Column + Size * (Intlen + p), (unsigned long)((Num - (uint32_t)Num) * m) % 10, 1, Size);
-        }
-    }
-}
-
-/**
  * @brief  OLED显示数字（十进制，带符号数）。
  * @param  Line 起始行位置。
  *     @arg 取值: 1 - 8
@@ -506,6 +496,39 @@ void OLED_ShowSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Le
         Number1 = -Number;
     }
     OLED_ShowNum(Line, Column + Size, Number1, Length, Size);
+}
+
+/**
+ * @brief  OLED显示有符号浮点数
+ * @param  Line 起始行位置。
+ *     @arg 取值: 1 - 8
+ * @param  Column 起始列位置。
+ *     @arg 取值: 1 - 128
+ * @param  Num 要显示的数字。
+ *     @arg 取值: -3.4028235E38 - +3.4028235E38
+ * @param  Intlen 要显示的整数位数。
+ *     @arg 取值: 1 - 10
+ * @param  Declen 要显示的小数位数。
+ *     @arg 取值: 1 - 10
+ * @param  Size 字符大小。
+ *     @arg 取值(宽x高): 6（6x8）、8（8x16）
+ * @retval 无
+ */
+void OLED_ShowFloat(uint8_t Line, uint8_t Column, float Num, uint8_t Intlen, uint8_t Declen, uint8_t Size)
+{
+    uint8_t p;
+    unsigned long m;
+
+    OLED_ShowSignedNum(Line, Column, (int32_t)Num, Intlen, Size);
+
+    if (Declen > 0)
+        OLED_ShowChar(Line, Column + Size * (Intlen + 1), '.', Size);
+
+    if(Num < 0) Num = -Num;
+    for (p = 2, m = 10; p <= Declen + 1; p++, m *= 10)
+    {
+        OLED_ShowNum(Line, Column + Size * (Intlen + p), (unsigned long)((Num - (uint32_t)Num) * m) % 10, 1, Size);
+    }
 }
 
 /**
