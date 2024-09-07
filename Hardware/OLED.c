@@ -1,11 +1,9 @@
 /**
- ******************************************************************************
  * @file    OLED.c
+ * @version v1.3.1
  * @author  Bairu
- * @version V1.3
- * @date    2024年7月18日 19:29:32
- * @brief   OLED屏幕驱动程序
- ******************************************************************************
+ * @date    2024年8月17日 22:10:42
+ * @brief   STM32 OLED屏幕驱动程序(SSD1306, I2C)
  */
 
 #include "stm32f10x.h"
@@ -245,9 +243,9 @@ void OLED_Clear(void)
 }
 
 /**
- * @brief  OLED指定行水平滚动。
- *      注意：必须先将显示数据传输完成后再启动滚动，否则极易乱码。
- *      推荐顺序：调用OLED_Stop_Scroll -> 调用OLED_Clear -> 传输显示数据 -> 调用OLED_Scroll
+ * @brief  设置屏幕内容连续水平滚动。
+ *      注意：调用本函数后，若要更新显示数据必须先停止滚动，数据全部传输完成后再启动滚动，否则极易显示乱码。
+ *      推荐顺序：调用OLED_Stop_Scroll -> 传输显示数据 -> 调用OLED_Start_Scroll
  * @param  LineS 滚动行范围: 第一行行号。
  *     @arg 有效取值:
  *      - \b Line1
@@ -291,13 +289,13 @@ void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Level)
     };
 
     OLED_WriteCommand(0x2E);  // 关闭滚动
-    OLED_WriteCommand(ScrLR); // 水平向左滚动
-    OLED_WriteCommand(0x00);  // 虚拟字节
+    OLED_WriteCommand(ScrLR); // 水平滚动方向
+    OLED_WriteCommand(0x00);  // 空字节，固定0x00
     OLED_WriteCommand(LineS); // 起始行
-    OLED_WriteCommand(Speed[Level]); // 滚动速度（帧）
+    OLED_WriteCommand(Speed[Level]); // 滚动速度（间隔帧数）
     OLED_WriteCommand(LineE); // 终止行
-    OLED_WriteCommand(0x00);  // 虚拟字节
-    OLED_WriteCommand(0xFF);  // 虚拟字节
+    OLED_WriteCommand(0x00);  // 空字节，固定0x00
+    OLED_WriteCommand(0xFF);  // 空字节，固定0xFF
     OLED_WriteCommand(0x2F);  // 开启滚动
 }
 
@@ -309,6 +307,16 @@ void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Level)
 void OLED_Stop_Scroll(void)
 {
     OLED_WriteCommand(0x2E); // 关闭滚动
+}
+
+/**
+ * @brief  OLED启动屏幕滚动。
+ * @param  无
+ * @retval 无
+ */
+void OLED_Start_Scroll(void)
+{
+    OLED_WriteCommand(0x2F);  // 开启滚动
 }
 
 /**
@@ -366,7 +374,7 @@ void OLED_Init(void)
     OLED_WriteCommand(0x12);
 
     OLED_WriteCommand(0x81); // 设置对比度控制
-    OLED_WriteCommand(0xCF);
+    OLED_WriteCommand(0xA0);
 
     OLED_WriteCommand(0xD9); // 设置预充电周期
     OLED_WriteCommand(0xF1);

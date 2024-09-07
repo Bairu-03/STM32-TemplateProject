@@ -1,30 +1,23 @@
 /**
- ******************************************************************************
  * @file    OLED.h
+ * @version v1.3.1
  * @author  Bairu
- * @version V1.3
- * @date    2024年7月17日 19:24:43
- * @brief   OLED屏幕驱动程序头文件，包含数据类型定义、宏定义及OLED.c内所有函数声明
- ******************************************************************************
+ * @date    2024年8月17日 22:17:45
+ * @brief   STM32 OLED屏幕驱动程序头文件，包含参数宏定义及OLED.c内所有函数声明
  */
 
 #ifndef __OLED_H
 #define __OLED_H
 
-/*********************数据类型定义***********************/
+#include "stdint.h"
 
-typedef signed char int8_t;
-typedef unsigned char uint8_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
+/********************模拟I2C引脚定义*********************/
 
-/*********************外设端口定义************************/
+#define  APB2_GPIO  RCC_APB2Periph_GPIOB  // APB2外设
+#define  GPIOX      GPIOB                 // GPIOB端口
 
-#define APB2_GPIO RCC_APB2Periph_GPIOB
-#define GPIOX GPIOB
-
-#define SCL_Pin GPIO_Pin_8 // PB8 -> SCL
-#define SDA_Pin GPIO_Pin_9 // PB9 -> SDA
+#define  SCL_Pin    GPIO_Pin_8    // PB8 -> SCL
+#define  SDA_Pin    GPIO_Pin_9    // PB9 -> SDA
 
 /**********************参数宏定义************************/
 
@@ -58,6 +51,7 @@ void OLED_Display_On(void);
 void OLED_Clear(void);
 void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Level);
 void OLED_Stop_Scroll(void);
+void OLED_Start_Scroll(void);
 uint32_t OLED_Pow(uint32_t X, uint32_t Y);
 
 void OLED_ShowChar(uint8_t Line, uint8_t Column, int8_t Char, uint8_t Size);

@@ -1,20 +1,26 @@
 #include "usart.h"
 
 /**
- * 接收状态标志
- * bit15，接收完成标志（0x0a）
- * bit14，接收到0x0d
- * bit13~0，接收到的有效字节数
+ * 串口接收状态标志。
+ * bit15，接收到0x0a置1，接收完成；
+ * bit14，接收到0x0d置1；
+ * bit13~bit0，接收到的有效字节数。
  */
 uint16_t USART_RX_STA = 0;
 
 /**
+ * PA9-TXD | PA10-RXD
  * 接收缓冲数组，最大USART_REC_LEN个字节。
- * 在取完串口数据后，需要用 USART_RX_STA = 0 初始化串口接收标志
+ * 在取完串口数据后，需要用 Reset_UART_RecStatus() 初始化串口接收标志
  */
 uint8_t USART_RX_BUF[USART_REC_LEN];
 
-void uart_init(uint32_t bound)
+/**
+ * @brief  初始化串口，PA9-TXD | PA10-RXD。
+ * @param  bound 串口波特率。
+ * @retval 无
+ */
+void UART_init(uint32_t bound)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -51,6 +57,50 @@ void uart_init(uint32_t bound)
     USART_Cmd(USART1, ENABLE);                     // 使能串口1
 }
 
+/**
+ * @brief  串口发送数据。
+ * @param  data 要发送的数据。
+ * @retval 无
+ */
+void UART_SendData(uint16_t data)
+{
+    USART_SendData(USART1, data);
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET); // 等待发送完成
+}
+
+/**
+ * @brief  判断串口接收是否完成（接收到0x0D 0x0A）。
+ * @param  无
+ * @retval 状态值
+ *      - \b 1 : 接收完成
+ *      - \b 0 : 接收未完成
+ */
+uint8_t get_UART_RecStatus(void)
+{
+    // 若USART_RX_STA最高位为1，接收完成
+    return ((USART_RX_STA & 0x8000) ? 1 : 0);
+}
+
+/**
+ * @brief  获取串口接收到的数据的长度。
+ * @param  无
+ * @retval 数组长度值(uint16_t)
+ */
+uint16_t get_UART_RecLength(void)
+{
+    return (uint16_t)(USART_RX_STA & 0x3FFF);
+}
+
+/**
+ * @brief  重置串口接收状态标志，准备下次接收。
+ * @param  无
+ * @retval 无
+ */
+void Reset_UART_RecStatus(void)
+{
+    USART_RX_STA = 0;
+}
+
 void USART1_IRQHandler(void)
 {
     uint8_t Res;
@@ -82,26 +132,3 @@ void USART1_IRQHandler(void)
         }
     }
 }
-
-        // 串口收发数据模板1
-        // if (USART_RX_STA & 0x8000)
-        // {
-        //     uint8_t len, t;
-        //     len = USART_RX_STA & 0x3fff;
-        //     for (t = 0; t < len; t++)
-        //     {
-        //         USART_SendData(USART1, USART_RX_BUF[t]);
-        //         while (USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
-        //     }
-
-        //     USART_RX_STA = 0;
-        // }
-
-        // 串口收发数据模板2
-        // if (USART_RX_STA & 0x8000)
-        // {
-        //     OLED_ShowHexNum(3, 1, USART_RX_BUF[0], 2, 8);
-        //     OLED_ShowHexNum(3, 17, USART_RX_BUF[1], 2, 8);
-        //     OLED_ShowHexNum(3, 33, USART_RX_BUF[2], 2, 8);
-        //     USART_RX_STA = 0;
-        // }

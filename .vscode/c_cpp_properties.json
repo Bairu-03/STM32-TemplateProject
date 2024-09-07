@@ -3,18 +3,21 @@
         {
             "name": "TrackingCar",
             "includePath": [
-                "c:\\Users\\Bairu\\Desktop\\Tracking\\Start",
-                "c:\\Users\\Bairu\\Desktop\\Tracking\\Library",
-                "c:\\Users\\Bairu\\Desktop\\Tracking\\System",
-                "c:\\Users\\Bairu\\Desktop\\Tracking\\Hardware",
-                "c:\\Users\\Bairu\\Desktop\\Tracking\\User",
+                "d:\\Files\\MCU\\STM32_Test\\Tracking\\Start",
+                "d:\\Files\\MCU\\STM32_Test\\Tracking\\Library",
+                "d:\\Files\\MCU\\STM32_Test\\Tracking\\System",
+                "d:\\Files\\MCU\\STM32_Test\\Tracking\\Hardware",
+                "d:\\Files\\MCU\\STM32_Test\\Tracking\\User",
                 "D:\\Program_Files\\Keil_v5\\ARM\\ARMCC\\include",
                 "D:\\Program_Files\\Keil_v5\\ARM\\ARMCC\\include\\arm_linux",
                 "D:\\Program_Files\\Keil_v5\\ARM\\ARMCC\\include\\arm_linux_compat",
-                "D:\\Program_Files\\Keil_v5\\ARM\\ARMCC\\include\\rw"
+                "D:\\Program_Files\\Keil_v5\\ARM\\ARMCC\\include\\rw",
+                "${default}",
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "USE_STDPERIPH_DRIVER",
+                "STM32F10X_MD",
                 "__CC_ARM",
                 "__arm__",
                 "__align(x)=",

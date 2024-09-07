@@ -339,7 +339,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER</Define>
+              <Define>USE_STDPERIPH_DRIVER,STM32F10X_MD</Define>
               <Undefine></Undefine>
               <IncludePath>.\Start;.\Library;.\System;.\Hardware;.\User</IncludePath>
             </VariousControls>
@@ -689,11 +689,6 @@
               <FileName>OLED.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\OLED.h</FilePath>
-            </File>
-            <File>
-              <FileName>OLED_Font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\OLED_Font.c</FilePath>
             </File>
             <File>
               <FileName>OLED_Font.h</FileName>

@@ -1,34 +1,31 @@
 #include "stm32f10x.h"
 #include "delay.h"
 #include "OLED.h"
-#include "Motor.h"
-#include "InfTrack.h"
 #include "usart.h"
 
 int main(void)
 {
     OLED_Init();
-    Motor_PWM_Init();
-    InfTracker_Init();
-    uart_init(115200);
-    OLED_ShowString(1, 1, "UART Track Test", 8);
+    UART_init(115200);
 
-    uint8_t def = 0;
+    OLED_ShowString(1, 1, "UART OLED T", 8);
+
     while (1)
     {
-        if (USART_RX_STA & 0x8000)
+        // 串口收发测试
+        if (get_UART_RecStatus())
         {
-            def = USART_RX_BUF[0];
-            OLED_ShowNum(3, 1, def, 2, 8);
-            USART_RX_STA = 0;
+            uint8_t t;
+            OLED_Clear();
+            for (t = 0; t < get_UART_RecLength(); t++)
+            {
+                UART_SendData(USART_RX_BUF[t]);
+
+                /* 1A 2B 3C 4D 5E */
+                /* 1  25 49 73 97 */
+                OLED_ShowHexNum(1, (t * 24 + 1), USART_RX_BUF[t], 2,8);
+            }
+            Reset_UART_RecStatus();
         }
-        if (def == 50) // 101 直行前进
-            Car_Run(Car_F, 30, 30);
-        else if ((def > 50) && (def < 70)) // 011 左转
-            Car_Run(Car_F, 0, 30);
-        else if ((def < 50) && (def > 30)) // 110 右转
-            Car_Run(Car_F, 30, 0);
-        else
-            Car_Run(Car_P, 0, 0);
     }
 }
