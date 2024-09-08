@@ -696,6 +696,11 @@
               <FilePath>.\Hardware\OLED_Font.h</FilePath>
             </File>
             <File>
+              <FileName>OLED_BMP.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED_BMP.h</FilePath>
+            </File>
+            <File>
               <FileName>PWM.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\PWM.c</FilePath>
@@ -724,6 +729,16 @@
               <FileName>Motor.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\Motor.h</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Software.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\I2C_Software.c</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Software.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\I2C_Software.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -3,163 +3,17 @@
  * @version v1.3.1
  * @author  Bairu
  * @date    2024年8月17日 22:10:42
- * @brief   STM32 OLED屏幕驱动程序(SSD1306, I2C)
+ * @brief   STM32 OLED屏幕驱动程序(SSD1306或SSD1315, I2C)
  */
 
 #include "stm32f10x.h"
 #include "OLED.h"
 #include "OLED_Font.h"
-
-#define I2C_ACK 0
-#define I2C_NO_ACK 1
-#define OLED_R_SDA() GPIO_ReadInputDataBit(GPIOX, SDA_Pin)
-#define OLED_W_SCL(x) GPIO_WriteBit(GPIOX, SCL_Pin, (BitAction)(x))
-#define OLED_W_SDA(x) GPIO_WriteBit(GPIOX, SDA_Pin, (BitAction)(x))
+#include "I2C_Software.h"
 
 /**
- * @brief  模拟I2C信号IO口初始化。
- * @param  无
- * @retval 无
- */
-void Sim_I2C_Init(void)
-{
-    RCC_APB2PeriphClockCmd(APB2_GPIO, ENABLE);
-
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-    GPIO_InitStructure.GPIO_Pin = SCL_Pin;
-    GPIO_Init(GPIOX, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = SDA_Pin;
-    GPIO_Init(GPIOX, &GPIO_InitStructure);
-
-    OLED_W_SCL(1);
-    OLED_W_SDA(1);
-}
-
-/**
- * @brief  模拟I2C起始信号。
- * @param  无
- * @retval 无
- */
-void Sim_I2C_Start(void)
-{
-    OLED_W_SDA(1);
-    OLED_W_SCL(1);
-    OLED_W_SDA(0);
-    OLED_W_SCL(0);
-}
-
-/**
- * @brief  模拟I2C停止信号。
- * @param  无
- * @retval 无
- */
-void Sim_I2C_Stop(void)
-{
-    OLED_W_SDA(0);
-    OLED_W_SCL(1);
-    OLED_W_SDA(1);
-}
-
-/**
- * @brief  模拟I2C读取从机应答信号。
- * @param  无
- * @retval 从机应答状态，I2C_NO_ACK: 无应答，I2C_ACK: 应答。
- */
-uint8_t I2C_Wait_Ack(void)
-{
-    uint8_t ack;
-    OLED_W_SCL(0);
-    OLED_W_SDA(1);
-    OLED_W_SCL(1);
-
-    if (OLED_R_SDA())
-        ack = I2C_NO_ACK;
-    else
-        ack = I2C_ACK;
-
-    OLED_W_SCL(0);
-    return ack;
-}
-
-/**
- * @brief  模拟I2C主机发送应答信号。
- * @param  ack 决定主机是否发送应答信号。
- *     @arg 有效取值:
- *      - \b I2C_ACK : 发送应答信号
- *      - \b I2C_NO_ACK: 不发送应答信号
- * @retval 无
- */
-void I2C_Send_Ack(uint8_t ack)
-{
-    OLED_W_SCL(0);
-
-    if (ack == I2C_ACK)
-        OLED_W_SDA(0);
-    else
-        OLED_W_SDA(1);
-
-    OLED_W_SCL(1);
-    OLED_W_SCL(0);
-}
-
-/**
- * @brief  I2C读取一个字节。
- * @param  ack 决定主机是否发送应答信号。
- *     @arg 有效取值:
- *      - \b I2C_ACK: 发送应答信号
- *      - \b I2C_NO_ACK: 不发送应答信号
- * @retval data 读取到的数据
- */
-uint8_t I2C_Read_Byte(uint8_t ack)
-{
-    uint8_t data = 0;
-    uint8_t i;
-    OLED_W_SCL(0);
-    OLED_W_SDA(1);
-    for (i = 0; i < 8; i++)
-    {
-        OLED_W_SCL(1);
-        data <<= 1;
-
-        if (OLED_R_SDA())
-            data |= 0x01;
-        else
-            data &= 0xFE;
-
-        OLED_W_SCL(0);
-    }
-    I2C_Send_Ack(ack);
-    return data;
-}
-
-/**
- * @brief  I2C发送一个字节。
- * @param  Byte  要发送的一个字节。
- * @retval 无
- */
-void I2C_Send_Byte(uint8_t Byte)
-{
-    uint8_t i;
-    for (i = 0; i < 8; i++)
-    {
-        OLED_W_SDA(Byte & (0x80 >> i));
-        OLED_W_SCL(1);
-        OLED_W_SCL(0);
-    }
-
-    // while(I2C_Wait_Ack());    //等待从机应答信号
-
-    OLED_W_SCL(1); // 变化时钟信号，不等待从机应答
-    OLED_W_SCL(0);
-}
-
-/**
- * @brief  向OLED屏发送命令。
- * @param  Command 要写入的命令。
+ * @brief  向OLED屏发送指令。
+ * @param  Command 要写入的指令。
  * @retval 无
  */
 void OLED_WriteCommand(uint8_t Command)
@@ -183,6 +37,21 @@ void OLED_WriteData(uint8_t Data)
     I2C_Send_Byte(0x40); // 写数据
     I2C_Send_Byte(Data);
     Sim_I2C_Stop();
+}
+
+/**
+ * @brief  软延时。
+ * @param  无
+ * @retval 无
+ */
+void OLED_delay(void)
+{
+    uint32_t i, j;
+    for (i = 0; i < 2000; i++) // 上电延时
+    {
+        for (j = 0; j < 2000; j++)
+            ;
+    }
 }
 
 /**
@@ -225,6 +94,45 @@ void OLED_Display_On(void)
 }
 
 /**
+ * @brief  设置屏幕对比度。
+ * @param  contrast 对比度值。
+ *     @arg 有效取值: 0x00 - 0xFF
+ * @retval 无
+ */
+void OLED_SetContrast(uint8_t contrast)
+{
+    OLED_WriteCommand(0x81); // 设置对比度
+    OLED_WriteCommand(contrast);
+}
+
+/**
+ * @brief  设置OLED显示模式 - 正显/反显。
+ * @param  mode 显示模式。
+ *     @arg 有效取值:
+ *      - \b POSITIVE_MODE : 正显（1 亮 0 灭）
+ *      - \b NEGATIVE_MODE : 反显（0 亮 1 灭）
+ * @retval 无
+ */
+void OLED_SetDisplayMode(uint8_t mode)
+{
+    OLED_WriteCommand(mode);
+}
+
+/**
+ * @brief  OLED测试模式/正常模式。
+ *      注：切换到测试模式不会破坏原有数据，且此模式仍可传输显示数据，待退出测试模式后会正常显示。
+ * @param  cmd 指定模式。
+ *     @arg 有效取值:
+ *      - \b T_ON : 测试模式（屏幕全亮，忽略显示数据）
+ *      - \b T_OFF : 正常模式
+ * @retval 无
+ */
+void OLED_Test(uint8_t cmd)
+{
+    OLED_WriteCommand(cmd);
+}
+
+/**
  * @brief  OLED清屏。
  * @param  无
  * @retval 无
@@ -243,61 +151,187 @@ void OLED_Clear(void)
 }
 
 /**
+ * @brief  OLED清指定行。
+ * @param  LineS 起始行行号。
+ *     @arg 有效取值: 1 - 8
+ * @param  LineE 结尾行行号。
+ *      注意：LineE必须大于等于LineS。
+ *     @arg 有效取值: 1 - 8
+ * @retval 无
+ */
+void OLED_ClearLine(uint8_t LineS, uint8_t LineE)
+{
+    uint8_t i, j;
+    for (j = (LineS - 1); j <= (LineE - 1); j++)
+    {
+        OLED_SetCursor(j, 0);
+        for (i = 0; i < 128; i++)
+        {
+            OLED_WriteData(0x00);
+        }
+    }
+}
+
+/**
  * @brief  设置屏幕内容连续水平滚动。
  *      注意：调用本函数后，若要更新显示数据必须先停止滚动，数据全部传输完成后再启动滚动，否则极易显示乱码。
  *      推荐顺序：调用OLED_Stop_Scroll -> 传输显示数据 -> 调用OLED_Start_Scroll
- * @param  LineS 滚动行范围: 第一行行号。
- *     @arg 有效取值:
- *      - \b Line1
- *      - \b Line2
- *      - \b Line3
- *      - \b Line4
- *      - \b Line5
- *      - \b Line6
- *      - \b Line7
- *      - \b Line8
- * @param  LineE 滚动行范围: 最后一行行号。
- *     @arg 有效取值:
- *      - \b Line1
- *      - \b Line2
- *      - \b Line3
- *      - \b Line4
- *      - \b Line5
- *      - \b Line6
- *      - \b Line7
- *      - \b Line8
  * @param  ScrLR 滚动方向。
  *     @arg 有效取值:
  *      - \b ScrL : 向左滚动
  *      - \b ScrR : 向右滚动
+ * @param  LineS 滚动行范围: 起始行行号。
+ *     @arg 有效取值: 1 - 8
+ * @param  LineE 滚动行范围: 结尾行行号。
+ *      注意：LineE必须大于等于LineS。
+ *     @arg 有效取值: 1 - 8
  * @param  Level 滚动速度等级。
  *     @arg 取值: 0 - 7（慢 - 快）
  * @retval 无
  */
-void OLED_Scroll(uint8_t LineS, uint8_t LineE, uint8_t ScrLR, uint8_t Level)
+void OLED_Scroll_H(uint8_t ScrLR, uint8_t LineS, uint8_t LineE, uint8_t Level)
 {
     // SSD1306手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
     uint8_t Speed[8] = {
-        0x03,   // 256帧
-        0x02,   // 128帧
-        0x01,   // 64帧
-        0x06,   // 25帧
-        0x00,   // 5帧
-        0x05,   // 4帧
-        0x04,   // 3帧
-        0x07    // 2帧
+        0x03, // 256帧
+        0x02, // 128帧
+        0x01, // 64帧
+        0x06, // 25帧
+        0x00, // 5帧
+        0x05, // 4帧
+        0x04, // 3帧
+        0x07  // 2帧
     };
 
-    OLED_WriteCommand(0x2E);  // 关闭滚动
-    OLED_WriteCommand(ScrLR); // 水平滚动方向
-    OLED_WriteCommand(0x00);  // 空字节，固定0x00
-    OLED_WriteCommand(LineS); // 起始行
+    OLED_WriteCommand(0x2E); // 关闭滚动
+    OLED_delay();
+    OLED_WriteCommand(ScrLR);        // 水平滚动方向
+    OLED_WriteCommand(0x00);         // 空字节，固定0x00
+    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
     OLED_WriteCommand(Speed[Level]); // 滚动速度（间隔帧数）
-    OLED_WriteCommand(LineE); // 终止行
-    OLED_WriteCommand(0x00);  // 空字节，固定0x00
-    OLED_WriteCommand(0xFF);  // 空字节，固定0xFF
-    OLED_WriteCommand(0x2F);  // 开启滚动
+    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
+    OLED_WriteCommand(0x00);         // 空字节，固定0x00
+    OLED_WriteCommand(0xFF);         // 空字节，固定0xFF
+    OLED_WriteCommand(0x2F);         // 开启滚动
 }
+
+#ifdef OLED_SSD1315
+/**
+ * @brief  设置屏幕内容连续垂直和水平滚动。
+ *      注意：调用本函数后，若要更新显示数据必须先停止滚动，数据全部传输完成后再启动滚动，否则极易显示乱码。
+ *      推荐顺序：调用OLED_Stop_Scroll -> 传输显示数据 -> 调用OLED_Start_Scroll
+ * @param  PixLineS 垂直滚动起始像素行。
+ *     @arg 有效取值: 1 - 64
+ * @param  PixLineNum 执行垂直滚动的像素行数。
+ *     @arg 有效取值: 1 - 64
+ * @param  Horizontal 设置是否启用水平方向滚动。
+ *     @arg 有效取值:
+ *      - \b ScrH_ON : 启用水平滚动
+ *      - \b ScrH_OFF : 禁用水平滚动
+ * @param  ScrVLR 水平滚动方向，仅在启用水平方向滚动时有效。
+ *     @arg 有效取值:
+ *      - \b ScrVL : 垂直+向左滚动
+ *      - \b ScrVR : 垂直+向右滚动
+ * @param  LineS 水平滚动起始行，仅在启用水平方向滚动时有效。
+ *     @arg 有效取值: 1 - 8
+ * @param  LineE 水平滚动终止行，仅在启用水平方向滚动时有效。
+ *     @arg 有效取值: 1 - 8
+ * @param  ColumnS 水平滚动起始列，仅在启用水平方向滚动时有效。
+ *     @arg 有效取值: 1 - 128
+ * @param  ColumnE 水平滚动终止列，仅在启用水平方向滚动时有效。
+ *     @arg 有效取值: 1 - 128
+ * @param  Offset 每次垂直向上滚动的偏移量。
+ *     @arg 有效取值: 0 - 63
+ * @param  Level 滚动速度等级。
+ *     @arg 有效取值: 0 - 7（慢 - 快）
+ * @retval 无
+ */
+void OLED_Scroll_VH(uint8_t PixLineS, uint8_t PixLineNum,
+                    uint8_t Horizontal, uint8_t ScrVLR,
+                    uint8_t LineS, uint8_t LineE,
+                    uint8_t ColumnS, uint8_t ColumnE,
+                    uint8_t Offset, uint8_t Level)
+{
+    // SSD13xx手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
+    uint8_t Speed[8] = {
+        0x03, // 256帧
+        0x02, // 128帧
+        0x01, // 64帧
+        0x06, // 25帧
+        0x00, // 5帧
+        0x05, // 4帧
+        0x04, // 3帧
+        0x07  // 2帧
+    };
+
+    OLED_WriteCommand(0x2E); // 关闭滚动
+    OLED_delay();
+    OLED_WriteCommand(0xA3);         // 启用部分区域水平+垂直滚动
+    OLED_WriteCommand(PixLineS - 1); // 垂直滚动起始像素行
+    OLED_WriteCommand(PixLineNum - 1);  // 执行垂直滚动的像素行数
+    OLED_WriteCommand(ScrVLR);       // 滚动方向
+    OLED_WriteCommand(Horizontal);   // 水平滚动开关
+    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
+    OLED_WriteCommand(Speed[Level]); // 滚动速度（间隔帧数）
+    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
+    OLED_WriteCommand(Offset);       // 垂直向上滚动偏移量，0x00 - 0x3F
+    OLED_WriteCommand(ColumnS - 1);  // 水平滚动起始列
+    OLED_WriteCommand(ColumnE - 1);  // 水平滚动终止列
+    OLED_WriteCommand(0x2F);         // 开启滚动
+}
+#elif defined(OLED_SSD1306)
+/**
+ * @brief  设置屏幕内容连续垂直和水平滚动。要实现仅垂直滚动，将LineS和LineE都设为1即可。
+ *      注意：调用本函数后，若要更新显示数据必须先停止滚动，数据全部传输完成后再启动滚动，否则极易显示乱码。
+ *      推荐顺序：调用OLED_Stop_Scroll -> 传输显示数据 -> 调用OLED_Start_Scroll
+ * @param  ScrVLR 水平滚动方向。
+ *     @arg 有效取值:
+ *      - \b ScrVL : 垂直+向左滚动
+ *      - \b ScrVR : 垂直+向右滚动
+ * @param  LineS 水平滚动起始行。
+ *     @arg 有效取值: 1 - 8
+ * @param  LineE 水平滚动终止行。
+ *     @arg 有效取值: 1 - 8
+ * @param  PixLineS 垂直滚动起始像素行。
+ *     @arg 有效取值: 1 - 64
+ * @param  PixLineNum 执行垂直滚动的像素行数。
+ *     @arg 有效取值: 1 - 64
+ * @param  Offset 每次垂直向上滚动的偏移量。
+ *     @arg 有效取值: 0 - 63
+ * @param  Level 滚动速度等级。
+ *     @arg 有效取值: 0 - 7（慢 - 快）
+ * @retval 无
+ */
+void OLED_Scroll_VH(uint8_t ScrVLR, uint8_t LineS, uint8_t LineE,
+                    uint8_t PixLineS, uint8_t PixLineNum,
+                    uint8_t Offset, uint8_t Level)
+{
+    // SSD13xx手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
+    uint8_t Speed[8] = {
+        0x03, // 256帧
+        0x02, // 128帧
+        0x01, // 64帧
+        0x06, // 25帧
+        0x00, // 5帧
+        0x05, // 4帧
+        0x04, // 3帧
+        0x07  // 2帧
+    };
+
+    OLED_WriteCommand(0x2E); // 关闭滚动
+    OLED_delay();
+    OLED_WriteCommand(ScrVLR);       // 滚动方向
+    OLED_WriteCommand(0x00);         // 空字节，固定0x00
+    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
+    OLED_WriteCommand(Speed[Level]); // 滚动时间间隔
+    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
+    OLED_WriteCommand(Offset);       // 垂直滚动偏移量，0x00 - 0x3F
+    OLED_WriteCommand(0xA3);         // 启用部分区域水平+垂直滚动
+    OLED_WriteCommand(PixLineS - 1); // 垂直滚动起始像素行
+    OLED_WriteCommand(PixLineNum - 1);  // 执行垂直滚动的像素行数
+    OLED_WriteCommand(0x2F);         // 开启滚动
+}
+#endif
 
 /**
  * @brief  OLED停止屏幕滚动。
@@ -316,7 +350,7 @@ void OLED_Stop_Scroll(void)
  */
 void OLED_Start_Scroll(void)
 {
-    OLED_WriteCommand(0x2F);  // 开启滚动
+    OLED_WriteCommand(0x2F); // 开启滚动
 }
 
 /**
@@ -343,13 +377,7 @@ uint32_t OLED_Pow(uint32_t X, uint32_t Y)
  */
 void OLED_Init(void)
 {
-    uint32_t i, j;
-
-    for (i = 0; i < 1000; i++) // 上电延时
-    {
-        for (j = 0; j < 1000; j++)
-            ;
-    }
+    OLED_delay();
 
     Sim_I2C_Init(); // 端口初始化
 
@@ -374,7 +402,7 @@ void OLED_Init(void)
     OLED_WriteCommand(0x12);
 
     OLED_WriteCommand(0x81); // 设置对比度控制
-    OLED_WriteCommand(0xA0);
+    OLED_WriteCommand(0x80);
 
     OLED_WriteCommand(0xD9); // 设置预充电周期
     OLED_WriteCommand(0xF1);
@@ -532,7 +560,8 @@ void OLED_ShowFloat(uint8_t Line, uint8_t Column, float Num, uint8_t Intlen, uin
     if (Declen > 0)
         OLED_ShowChar(Line, Column + Size * (Intlen + 1), '.', Size);
 
-    if(Num < 0) Num = -Num;
+    if (Num < 0)
+        Num = -Num;
     for (p = 2, m = 10; p <= Declen + 1; p++, m *= 10)
     {
         OLED_ShowNum(Line, Column + Size * (Intlen + p), (unsigned long)((Num - (uint32_t)Num) * m) % 10, 1, Size);

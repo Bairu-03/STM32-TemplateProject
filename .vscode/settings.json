@@ -7,7 +7,9 @@
         "motor.h": "c",
         "usart.h": "c",
         "delay.h": "c",
-        "oled.h": "c"
+        "oled.h": "c",
+        "stdint.h": "c",
+        "oled_font.h": "c"
     },
     "Codegeex.CompletionDelay": 0.5,
     "Codegeex.GenerationPreference": "line by line"
