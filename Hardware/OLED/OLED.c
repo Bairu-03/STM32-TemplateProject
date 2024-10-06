@@ -1,10 +1,17 @@
 /**
- * @file    OLED.c
- * @version v1.3.1
- * @author  Bairu
- * @date    2024年8月17日 22:10:42
- * @brief   STM32 OLED屏幕驱动程序(SSD1306或SSD1315, I2C)
- */
+  *****************************************************************************
+  * @file    OLED.c
+  * @version v1.3.2
+  * @author  Bairu
+  * @date    2024年10月07日 00:30:17
+  * @brief   STM32 OLED屏幕驱动程序(SSD1306或SSD1315, I2C)
+  *****************************************************************************
+  * @copyright (c) 2024 Bairu. All Rights Reserved.
+  *
+  * Distributed under MIT license.
+  * See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+  *****************************************************************************
+  */
 
 #include "stm32f10x.h"
 #include "OLED.h"
@@ -113,9 +120,9 @@ void OLED_SetContrast(uint8_t contrast)
  *      - \b NEGATIVE_MODE : 反显（0 亮 1 灭）
  * @retval 无
  */
-void OLED_SetDisplayMode(uint8_t mode)
+void OLED_SetDisplayMode(OLED_DisplayMode mode)
 {
-    OLED_WriteCommand(mode);
+    OLED_WriteCommand((uint8_t)mode);
 }
 
 /**
@@ -123,13 +130,13 @@ void OLED_SetDisplayMode(uint8_t mode)
  *      注：切换到测试模式不会破坏原有数据，且此模式仍可传输显示数据，待退出测试模式后会正常显示。
  * @param  cmd 指定模式。
  *     @arg 有效取值:
- *      - \b T_ON : 测试模式（屏幕全亮，忽略显示数据）
- *      - \b T_OFF : 正常模式
+ *      - \b TEST_ON : 测试模式（屏幕全亮，忽略显示数据）
+ *      - \b TEST_OFF : 正常模式
  * @retval 无
  */
-void OLED_Test(uint8_t cmd)
+void OLED_Test(OLED_TestMode mode)
 {
-    OLED_WriteCommand(cmd);
+    OLED_WriteCommand((uint8_t)mode);
 }
 
 /**
@@ -185,34 +192,30 @@ void OLED_ClearLine(uint8_t LineS, uint8_t LineE)
  * @param  LineE 滚动行范围: 结尾行行号。
  *      注意：LineE必须大于等于LineS。
  *     @arg 有效取值: 1 - 8
- * @param  Level 滚动速度等级。
- *     @arg 取值: 0 - 7（慢 - 快）
+ * @param  Speed 滚动速度。
+ *     @arg 有效取值(由慢到快):
+ *      - \b OLED_ScrSpeed1
+ *      - \b OLED_ScrSpeed2
+ *      - \b OLED_ScrSpeed3
+ *      - \b OLED_ScrSpeed4
+ *      - \b OLED_ScrSpeed5
+ *      - \b OLED_ScrSpeed6
+ *      - \b OLED_ScrSpeed7
+ *      - \b OLED_ScrSpeed8
  * @retval 无
  */
-void OLED_Scroll_H(uint8_t ScrLR, uint8_t LineS, uint8_t LineE, uint8_t Level)
+void OLED_Scroll_H(OLED_ScrHorDir ScrLR, uint8_t LineS, uint8_t LineE, OLED_ScrSpeed Speed)
 {
-    // SSD1306手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
-    uint8_t Speed[8] = {
-        0x03, // 256帧
-        0x02, // 128帧
-        0x01, // 64帧
-        0x06, // 25帧
-        0x00, // 5帧
-        0x05, // 4帧
-        0x04, // 3帧
-        0x07  // 2帧
-    };
-
     OLED_WriteCommand(0x2E); // 关闭滚动
     OLED_delay();
-    OLED_WriteCommand(ScrLR);        // 水平滚动方向
-    OLED_WriteCommand(0x00);         // 空字节，固定0x00
-    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
-    OLED_WriteCommand(Speed[Level]); // 滚动速度（间隔帧数）
-    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
-    OLED_WriteCommand(0x00);         // 空字节，固定0x00
-    OLED_WriteCommand(0xFF);         // 空字节，固定0xFF
-    OLED_WriteCommand(0x2F);         // 开启滚动
+    OLED_WriteCommand((uint8_t)ScrLR); // 水平滚动方向
+    OLED_WriteCommand(0x00);           // 空字节，固定0x00
+    OLED_WriteCommand(LineS - 1);      // 水平滚动起始行
+    OLED_WriteCommand((uint8_t)Speed); // 滚动速度（间隔帧数）
+    OLED_WriteCommand(LineE - 1);      // 水平滚动终止行
+    OLED_WriteCommand(0x00);           // 空字节，固定0x00
+    OLED_WriteCommand(0xFF);           // 空字节，固定0xFF
+    OLED_WriteCommand(0x2F);           // 开启滚动
 }
 
 #ifdef OLED_SSD1315
@@ -242,42 +245,38 @@ void OLED_Scroll_H(uint8_t ScrLR, uint8_t LineS, uint8_t LineE, uint8_t Level)
  *     @arg 有效取值: 1 - 128
  * @param  Offset 每次垂直向上滚动的偏移量。
  *     @arg 有效取值: 0 - 63
- * @param  Level 滚动速度等级。
- *     @arg 有效取值: 0 - 7（慢 - 快）
+ * @param  Speed 滚动速度。
+ *     @arg 有效取值(由慢到快):
+ *      - \b OLED_ScrSpeed1
+ *      - \b OLED_ScrSpeed2
+ *      - \b OLED_ScrSpeed3
+ *      - \b OLED_ScrSpeed4
+ *      - \b OLED_ScrSpeed5
+ *      - \b OLED_ScrSpeed6
+ *      - \b OLED_ScrSpeed7
+ *      - \b OLED_ScrSpeed8
  * @retval 无
  */
 void OLED_Scroll_VH(uint8_t PixLineS, uint8_t PixLineNum,
-                    uint8_t Horizontal, uint8_t ScrVLR,
+                    OLED_ScrVerHorMode Horizontal, OLED_ScrVerHorDir ScrVLR,
                     uint8_t LineS, uint8_t LineE,
                     uint8_t ColumnS, uint8_t ColumnE,
-                    uint8_t Offset, uint8_t Level)
+                    uint8_t Offset, OLED_ScrSpeed Speed)
 {
-    // SSD13xx手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
-    uint8_t Speed[8] = {
-        0x03, // 256帧
-        0x02, // 128帧
-        0x01, // 64帧
-        0x06, // 25帧
-        0x00, // 5帧
-        0x05, // 4帧
-        0x04, // 3帧
-        0x07  // 2帧
-    };
-
     OLED_WriteCommand(0x2E); // 关闭滚动
     OLED_delay();
-    OLED_WriteCommand(0xA3);         // 启用部分区域水平+垂直滚动
-    OLED_WriteCommand(PixLineS - 1); // 垂直滚动起始像素行
-    OLED_WriteCommand(PixLineNum - 1);  // 执行垂直滚动的像素行数
-    OLED_WriteCommand(ScrVLR);       // 滚动方向
-    OLED_WriteCommand(Horizontal);   // 水平滚动开关
-    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
-    OLED_WriteCommand(Speed[Level]); // 滚动速度（间隔帧数）
-    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
-    OLED_WriteCommand(Offset);       // 垂直向上滚动偏移量，0x00 - 0x3F
-    OLED_WriteCommand(ColumnS - 1);  // 水平滚动起始列
-    OLED_WriteCommand(ColumnE - 1);  // 水平滚动终止列
-    OLED_WriteCommand(0x2F);         // 开启滚动
+    OLED_WriteCommand(0xA3);                // 启用部分区域水平+垂直滚动
+    OLED_WriteCommand(PixLineS - 1);        // 垂直滚动起始像素行
+    OLED_WriteCommand(PixLineNum - 1);      // 执行垂直滚动的像素行数
+    OLED_WriteCommand((uint8_t)ScrVLR);     // 滚动方向
+    OLED_WriteCommand((uint8_t)Horizontal); // 水平滚动开关
+    OLED_WriteCommand(LineS - 1);           // 水平滚动起始行
+    OLED_WriteCommand((uint8_t)Speed);      // 滚动速度（间隔帧数）
+    OLED_WriteCommand(LineE - 1);           // 水平滚动终止行
+    OLED_WriteCommand(Offset);              // 垂直向上滚动偏移量，0x00 - 0x3F
+    OLED_WriteCommand(ColumnS - 1);         // 水平滚动起始列
+    OLED_WriteCommand(ColumnE - 1);         // 水平滚动终止列
+    OLED_WriteCommand(0x2F);                // 开启滚动
 }
 #elif defined(OLED_SSD1306)
 /**
@@ -298,38 +297,34 @@ void OLED_Scroll_VH(uint8_t PixLineS, uint8_t PixLineNum,
  *     @arg 有效取值: 1 - 64
  * @param  Offset 每次垂直向上滚动的偏移量。
  *     @arg 有效取值: 0 - 63
- * @param  Level 滚动速度等级。
- *     @arg 有效取值: 0 - 7（慢 - 快）
+ * @param  Speed 滚动速度。
+ *     @arg 有效取值(由慢到快):
+ *      - \b OLED_ScrSpeed1
+ *      - \b OLED_ScrSpeed2
+ *      - \b OLED_ScrSpeed3
+ *      - \b OLED_ScrSpeed4
+ *      - \b OLED_ScrSpeed5
+ *      - \b OLED_ScrSpeed6
+ *      - \b OLED_ScrSpeed7
+ *      - \b OLED_ScrSpeed8
  * @retval 无
  */
-void OLED_Scroll_VH(uint8_t ScrVLR, uint8_t LineS, uint8_t LineE,
+void OLED_Scroll_VH(OLED_ScrVerHorDir ScrVLR, uint8_t LineS, uint8_t LineE,
                     uint8_t PixLineS, uint8_t PixLineNum,
-                    uint8_t Offset, uint8_t Level)
+                    uint8_t Offset, OLED_ScrSpeed Speed)
 {
-    // SSD13xx手册中规定的不同滚动速度指令（间隔多少帧滚动一次）
-    uint8_t Speed[8] = {
-        0x03, // 256帧
-        0x02, // 128帧
-        0x01, // 64帧
-        0x06, // 25帧
-        0x00, // 5帧
-        0x05, // 4帧
-        0x04, // 3帧
-        0x07  // 2帧
-    };
-
     OLED_WriteCommand(0x2E); // 关闭滚动
     OLED_delay();
-    OLED_WriteCommand(ScrVLR);       // 滚动方向
-    OLED_WriteCommand(0x00);         // 空字节，固定0x00
-    OLED_WriteCommand(LineS - 1);    // 水平滚动起始行
-    OLED_WriteCommand(Speed[Level]); // 滚动时间间隔
-    OLED_WriteCommand(LineE - 1);    // 水平滚动终止行
-    OLED_WriteCommand(Offset);       // 垂直滚动偏移量，0x00 - 0x3F
-    OLED_WriteCommand(0xA3);         // 启用部分区域水平+垂直滚动
-    OLED_WriteCommand(PixLineS - 1); // 垂直滚动起始像素行
+    OLED_WriteCommand((uint8_t)ScrVLR); // 滚动方向
+    OLED_WriteCommand(0x00);            // 空字节，固定0x00
+    OLED_WriteCommand(LineS - 1);       // 水平滚动起始行
+    OLED_WriteCommand((uint8_t)Speed);  // 滚动时间间隔
+    OLED_WriteCommand(LineE - 1);       // 水平滚动终止行
+    OLED_WriteCommand(Offset);          // 垂直滚动偏移量，0x00 - 0x3F
+    OLED_WriteCommand(0xA3);            // 启用部分区域水平+垂直滚动
+    OLED_WriteCommand(PixLineS - 1);    // 垂直滚动起始像素行
     OLED_WriteCommand(PixLineNum - 1);  // 执行垂直滚动的像素行数
-    OLED_WriteCommand(0x2F);         // 开启滚动
+    OLED_WriteCommand(0x2F);            // 开启滚动
 }
 #endif
 

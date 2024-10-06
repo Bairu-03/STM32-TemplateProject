@@ -1,7 +1,7 @@
 #include "stm32f10x.h"
 #include "delay.h"
 #include "OLED.h"
-#include "usart.h"
+#include "USART.h"
 
 int main(void)
 {
@@ -13,6 +13,7 @@ int main(void)
 
     Delay_ms(1000);
 
+    /* 设置OLED反显 */
     OLED_SetDisplayMode(NEGATIVE_MODE);
 
     /* 绘制进度条框 */
@@ -47,6 +48,9 @@ int main(void)
     OLED_ShowString(5, 1, "     FINISH     ", 8);
     Delay_ms(1000);
     OLED_ClearLine(5, 6);
+
+    /* 第一行文字右上滚动显示 */
+    OLED_Scroll_VH(1, 16, ScrH_ON, ScrVR, 1, 2, 1, 128, 1, OLED_ScrSpeed5);
 
     while (1)
     {
